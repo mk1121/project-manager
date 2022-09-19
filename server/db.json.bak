@@ -1,0 +1,53 @@
+{
+  "transactions": [
+   {
+    "name": "inc-1",
+    "type": "income",
+    "amount": 150000,
+    "id": 1
+  },
+  {
+    "name": "exp-1",
+    "amount": 535458,
+    "type": "expense",
+    "id": 2
+  },
+  {
+    "name": "inc-2",
+    "type": "income",
+    "amount": 563448,
+    "id": 3
+  },
+  {
+    "name": "exp-2",
+    "type": "expense",
+    "amount": 86464,
+    "id": 4
+  },
+  {
+    "name": "inc-3",
+    "type": "income",
+    "amount": 87888,
+    "id": 5
+  },
+  {
+    "name": "exp-3",
+    "amount": 58465,
+    "type": "expense",
+    "id": 6
+  },
+  {
+    "name": "inc-4",
+    "type": "income",
+    "amount": 34535,
+    "id": 7
+  },
+  {
+    "name": "exp-4",
+    "amount": 342,
+    "type": "expense",
+    "id": 8
+  }
+]
+  
+}
