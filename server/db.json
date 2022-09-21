@@ -45,36 +45,60 @@
   ],
   "team": [
     {
-      "name": "Design",
-      "description": "this is Design",
-      "catagory": {
-        "type": "design",
-        "color": "pink"
-      },
-      "assignedUsers": [
-        "t1@t.co",
-        "t2@t.co",
-        "t4@t.co",
-        "t5@t.co"
-      ],
-      "timestamp": 1663701829519,
-      "id": 8
-    },
-    {
       "name": "security team",
       "description": "this is Security",
       "catagory": {
-        "type": "security",
-        "color": "blue"
+        "type": "dev",
+        "color": "red"
       },
       "assignedUsers": [
-        "t1@t.co",
-        "t2@t.co",
-        "t3@t.co",
-        "t4@t.co"
+        {
+          "name": "test2",
+          "email": "t2@t.co"
+        },
+        {
+          "name": "test1",
+          "email": "t1@t.co"
+        },
+        {
+          "name": "test3",
+          "email": "t3@t.co"
+        }
       ],
-      "timestamp": 1663702347595,
-      "id": 9
+      "timestamp": 1663801114660,
+      "id": 1
+    },
+    {
+      "name": "Dev",
+      "description": "This is Dev",
+      "catagory": {
+        "type": "dev",
+        "color": "red"
+      },
+      "assignedUsers": [
+        {
+          "name": "test1",
+          "email": "t1@t.co"
+        }
+      ],
+      "timestamp": 1663801022283,
+      "id": 2
+    },
+    {
+      "name": "Dev",
+      "description": "This is Dev",
+      "catagory": {
+        "type": "dev",
+        "color": "red"
+      },
+      "assignedUsers": [
+        {
+          "name": "test2",
+          "email": "t2@t.co"
+        }
+      ],
+      "timestamp": 1663801129985,
+      "id": 3
     }
   ],
   "projects": [

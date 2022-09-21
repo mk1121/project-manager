@@ -3,43 +3,121 @@ import { Button, Checkbox, Label, TextInput } from 'flowbite-react'
 import Select from 'react-select'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useAddTeamMutation } from '../../features/team/teamApi'
+import {
+  useAddTeamMutation,
+  useEditTeamMutation,
+} from '../../features/team/teamApi'
 import { useGetAllUserQuery } from '../../features/users/usersApi'
-const AddTeamModal = ({ id,visible, toggleVisible }) => {
-console.log(' 🔔 8 👉 AddTeamModal.jsx 👉 id:', id);
+const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
+  const {
+    id: teamId,
+    name: teamName,
+    catagory: teamCatagory,
+    description: teamDescription,
+    assignedUsers: teamAssignedUsers,
+  } = team || {}
+  const [teamActionName, setTeamActionName] = useState('Add')
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [catagory, setCatagory] = useState()
+  const [catagory, setCatagory] = useState({
+    value: 'dev',
+    label: 'dev',
+    color: 'red',
+  })
   const [color, setColor] = useState()
-console.log(' 🔔 11 👉 AddTeamModal.jsx 👉 catagory:', catagory);
   const [member, setMember] = useState([])
   const user = useSelector((state) => state.auth.user)
+  const {email:userEmail} = user || {}
   const [addTeam, { isLoading, isError, isSuccess }] = useAddTeamMutation()
+  const [
+    editTeam,
+    {
+      isLoading: isEditLoading,
+      isError: isEditError,
+      isSuccess: isEditSuccess,
+    },
+  ] = useEditTeamMutation()
   const { data: userList, isSuccess: isUserListSuccess } = useGetAllUserQuery()
+
+  if (btnAction === 'add') {
+  }
+
+  const catagoryOptions = [
+    { value: 'dev', label: 'dev', color: 'red' },
+    { value: 'design', label: 'design', color: 'pink' },
+    { value: 'security', label: 'security', color: 'blue' },
+  ]
   useEffect(() => {
-    if (!isError && isSuccess) {
-      setColor('')
-      setName('')
-      setDescription('')
+    if (btnAction === 'edit') {
+      setTeamActionName('Edit')
+      setName(teamName)
+      setDescription(teamDescription)
+      setCatagory({
+        value: teamCatagory.type,
+        label: teamCatagory.type,
+        color: teamCatagory.color,
+      })
+      const memberList = teamAssignedUsers
+        .filter((el) => el.email !== user.email)
+        .map((el) => {
+          return {
+            label: el.name,
+            value: el.email,
+          }
+        })
+      setMember(memberList)
+    }
+  }, [btnAction])
+  useEffect(() => {
+    if ((!isError && isSuccess) || (!isEditError && isEditSuccess)) {
+      if (btnAction === 'add') {
+        setColor('')
+        setName('')
+        setDescription('')
+      }
       toggleVisible()
     }
-  }, [isError, isSuccess])
+  }, [isError, isSuccess, isEditError, isEditSuccess])
   const handleSubmit = (e) => {
     e.preventDefault()
-    addTeam({
-      data: {
-        name,
-        description,
-        catagory:{type:catagory.value,color:catagory.color},
-        assignedUsers: [user.email,...member.map(el => el.value)],
-        timestamp: new Date().getTime(),
-      },
-    })
+    if (btnAction === 'add') {
+      if (catagory.label !== '') {
+        addTeam({
+          userEmail,
+          data: {
+            name,
+            description,
+            catagory: { type: catagory.value, color: catagory.color },
+            assignedUsers: [
+              { name: user.name, email: user.email },
+              ...member.map((el) => {
+                return { name: el.label, email: el.value }
+              }),
+            ],
+            timestamp: new Date().getTime(),
+          },
+        })
+      }
+    }
+    if (btnAction === 'edit') {
+      editTeam({
+        id: teamId,
+        userEmail,
+        data: {
+          name,
+          description,
+          catagory: { type: catagory.value, color: catagory.color },
+          assignedUsers: [
+            { name: user.name, email: user.email },
+            ...member.map((el) => {
+              return { name: el.label, email: el.value }
+            }),
+          ],
+          timestamp: new Date().getTime(),
+        },
+      })
+    }
   }
-  const catagoryOptions = [
-  {  value:'dev', label: 'Dev',color:'red' },
-  {  value:'design',label: 'Design',color:'pink' },
-  {  value:'security',label: 'Security',color:'blue' }  ]
   const memberOptions =
     isUserListSuccess &&
     userList
@@ -50,10 +128,11 @@ console.log(' 🔔 11 👉 AddTeamModal.jsx 👉 catagory:', catagory);
           label: el.name,
         }
       })
+
   return (
     <>
       <Modal open={visible} onClickBackdrop={toggleVisible}>
-        <Modal.Header className='font-bold'>Add team</Modal.Header>
+        <Modal.Header className='font-bold'>{teamActionName} team</Modal.Header>
 
         <Modal.Body>
           <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
@@ -86,41 +165,33 @@ console.log(' 🔔 11 👉 AddTeamModal.jsx 👉 catagory:', catagory);
             <div>
               <div id='select'>
                 <div className='mb-2 block'>
-                  <Label htmlFor='colors' value='Select colors' />
+                  <Label htmlFor='colors' value='Select Catagory' />
                 </div>
-                {/* <Select */}
-                {/*   id='colors' */}
-                {/*   required={true} */}
-                {/*   value={color} */}
-                {/*   onChange={(e) => setColor(e.target.value)} */}
-                {/* > */}
-                {/*   <option>Dev</option> */}
-                {/*   <option>Blue</option> */}
-                {/*   <option>Pink</option> */}
-                {/*   <option>Yellow</option> */}
-                {/*   <option>Gray</option> */}
-                {/*   <option>Green</option> */}
-                {/*   <option>Purple</option> */}
-                {/* </Select> */}
                 <Select
-              defaultValue={catagoryOptions[2]}
-              name='catagory'
-              options={catagoryOptions}
-              onChange={e => setCatagory(e)}
-              className='basic-multi-select'
-              classNamePrefix='select'
+                  value={catagory}
+                  name='catagory'
+                  options={catagoryOptions}
+                  onChange={(e) => setCatagory(e)}
+                  className='basic-multi-select'
+                  classNamePrefix='Select Catagory'
                 />
               </div>
             </div>
-            <Select
-              defaultValue={[memberOptions[2], memberOptions[3]]}
-              isMulti
-              name='member'
-              onChange={(e) => setMember([...e])}
-              options={memberOptions}
-              className='basic-multi-select'
-              classNamePrefix='select'
-            />
+
+            <div id='select'>
+              <div className='mb-2 block'>
+                <Label htmlFor='member' value='Select Member' />
+              </div>
+              <Select
+                value={member}
+                isMulti
+                name='member'
+                onChange={(e) => setMember([...e])}
+                options={memberOptions}
+                className='basic-multi-select'
+                classNamePrefix='select'
+              />
+            </div>
             <Button type='submit'>Submit</Button>
           </form>{' '}
         </Modal.Body>

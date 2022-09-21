@@ -1,16 +1,25 @@
-import { useState } from "react"
-import AddTeamModal from "../components/modals/AddTeamModal"
-import TeamItem from "../components/TeamItem"
-import Error from "../components/ui/Error"
-import { useGetTeamQuery } from "../features/team/teamApi"
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import AddTeamModal from '../components/modals/AddTeamModal'
+import TeamItem from '../components/TeamItem'
+import Error from '../components/ui/Error'
+import { useGetTeamQuery } from '../features/team/teamApi'
 const Team = () => {
-const {data:getTeamData,isError,isLoading,isSuccess,error} = useGetTeamQuery() || {}
- const [visible, setVisible] = useState(false)
+  const user = useSelector((state) => state.auth.user)
+  const { email } = user
+  const {
+    data: getTeamData,
+    isError,
+    isLoading,
+    isSuccess,
+    error,
+  } = useGetTeamQuery(email) || {}
+  const [visible, setVisible] = useState(false)
   const toggleVisible = () => {
     setVisible(!visible)
   }
-  let content;
-  
+  let content
+
   if (isLoading) {
     content = <h4 className='m-2 text-center'>Loading...</h4>
   } else if (!isLoading && isError) {
@@ -22,16 +31,19 @@ const {data:getTeamData,isError,isLoading,isSuccess,error} = useGetTeamQuery() |
   } else if (!isLoading && !isError && getTeamData?.length === 0) {
     content = <h4 className='m-2 text-center'>No Team found!</h4>
   } else if (!isLoading && !isError && getTeamData?.length > 0) {
-    content = 
-        getTeamData.slice()
-          .sort((a, b) => b.timestamp - a.timestamp)
-          .map((team) => <TeamItem team={team} key={team.id}/>)
-  } 
+    content = getTeamData
+      .slice()
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .map((team) => <TeamItem team={team} key={team.id} />)
+  }
   return (
     <>
       <div className='px-10 mt-6 flex justify-between'>
         <h1 className='text-2xl font-bold'>Teams</h1>
-        <button onClick={toggleVisible} className='flex items-center justify-center w-6 h-6 ml-auto text-indigo-500 rounded hover:bg-indigo-500 hover:text-indigo-100'>
+        <button
+          onClick={toggleVisible}
+          className='flex items-center justify-center w-6 h-6 ml-auto text-indigo-500 rounded hover:bg-indigo-500 hover:text-indigo-100'
+        >
           <svg
             className='w-5 h-5'
             fill='none'
@@ -46,10 +58,14 @@ const {data:getTeamData,isError,isLoading,isSuccess,error} = useGetTeamQuery() |
             ></path>
           </svg>
         </button>
-          <AddTeamModal  visible={visible} toggleVisible={toggleVisible}/>
+        <AddTeamModal
+          btnAction='add'
+          visible={visible}
+          toggleVisible={toggleVisible}
+        />
       </div>
       <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 px-10 mt-4 gap-6 overflow-auto'>
-      {content}
+        {content}
       </div>
     </>
   )
