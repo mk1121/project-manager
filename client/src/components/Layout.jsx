@@ -1,8 +1,9 @@
 import { Link, useMatch } from 'react-router-dom'
 import logo from '../assets/images/logo.svg'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { userLoggedOut } from '../features/auth/authSlice'
 const Layout = ({ children }) => {
+  const user = useSelector((state) => state.auth.user)
   const dispatch = useDispatch()
   let match = useMatch('/team')
   const logout = () => {
@@ -42,6 +43,7 @@ const Layout = ({ children }) => {
               }`}
               to='/team'
             >
+
               Team
             </Link>
           </div>
@@ -49,7 +51,7 @@ const Layout = ({ children }) => {
             {' '}
             <button className='flex items-center justify-center w-8 h-8 ml-auto overflow-hidden rounded-full cursor-pointer'>
               <img
-                src='https://assets.codepen.io/5041378/internal/avatars/users/default.png?fit=crop&format=auto&height=512&version=1600304177&width=512'
+                src={user.avatar}
                 alt=''
               />
             </button>
