@@ -1,4 +1,5 @@
 import { Modal } from 'react-daisyui'
+import Error from '../ui/Error'
 import { Button, Checkbox, Label, TextInput } from 'flowbite-react'
 import Select from 'react-select'
 import { useEffect, useState } from 'react'
@@ -18,16 +19,17 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
   } = team || {}
   const [teamActionName, setTeamActionName] = useState('Add')
   const [name, setName] = useState('')
+  const [error, setError] = useState(null)
   const [description, setDescription] = useState('')
   const [catagory, setCatagory] = useState({
-    value: 'dev',
-    label: 'dev',
-    color: 'red',
+    value: '',
+    label: 'select a catagory',
+    color: '',
   })
   const [color, setColor] = useState()
   const [member, setMember] = useState([])
   const user = useSelector((state) => state.auth.user)
-  const {email:userEmail} = user || {}
+  const { email: userEmail } = user || {}
   const [addTeam, { isLoading, isError, isSuccess }] = useAddTeamMutation()
   const [
     editTeam,
@@ -48,32 +50,61 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
     { value: 'security', label: 'security', color: 'blue' },
   ]
   useEffect(() => {
-    if (btnAction === 'edit') {
-      setTeamActionName('Edit')
-      setName(teamName)
-      setDescription(teamDescription)
-      setCatagory({
-        value: teamCatagory.type,
-        label: teamCatagory.type,
-        color: teamCatagory.color,
-      })
-      const memberList = teamAssignedUsers
-        .filter((el) => el.email !== user.email)
-        .map((el) => {
-          return {
-            label: el.name,
-            value: el.email,
-          }
-        })
-      setMember(memberList)
+    if (visible) {
+      if (btnAction === 'add') {
+        if (catagory.value !== '') {
+          setError(null)
+        }
+        if (!visible) {
+          setColor('')
+          setName('')
+          setCatagory({
+            value: '',
+            label: 'select a catagory',
+            color: '',
+          })
+          setDescription('')
+          setError(null)
+        }
+      }
     }
-  }, [btnAction])
+  }, [visible, catagory])
+  useEffect(() => {
+    if (visible) {
+      if (btnAction === 'edit') {
+        setTeamActionName('Edit')
+        setName(teamName)
+        setDescription(teamDescription)
+        setCatagory({
+          value: teamCatagory.type,
+          label: teamCatagory.type,
+          color: teamCatagory.color,
+        })
+        const memberList = teamAssignedUsers
+          .filter((el) => el.email !== user.email)
+          .map((el) => {
+            return {
+              label: el.name,
+              value: el.email,
+            }
+          })
+        setMember(memberList)
+      }
+    }
+  }, [btnAction, error, visible])
   useEffect(() => {
     if ((!isError && isSuccess) || (!isEditError && isEditSuccess)) {
       if (btnAction === 'add') {
         setColor('')
+        setCatagory({
+          value: '',
+          label: 'select a catagory',
+          color: '',
+        })
+
         setName('')
         setDescription('')
+        setError(null)
       }
       toggleVisible()
     }
@@ -81,7 +112,9 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (btnAction === 'add') {
-      if (catagory.label !== '') {
+      if (catagory.value === '') {
+        setError('Please select a Catagory!')
+      } else if (catagory.value !== '') {
         addTeam({
           userEmail,
           data: {
@@ -134,6 +167,7 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
       <Modal open={visible} onClickBackdrop={toggleVisible}>
         <Modal.Header className='font-bold'>{teamActionName} team</Modal.Header>
 
+        {error && <Error message={error} />}
         <Modal.Body>
           <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
             <div>

@@ -7,6 +7,8 @@ import Login from './pages/Login'
 import Team from './pages/Team'
 import Projects from './pages/Projects'
 import Layout from './components/Layout'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 function App() {
   const authChecked = useAuthCheck()
 
@@ -37,9 +39,11 @@ function App() {
           path='/projects'
           element={
             <PrivateRoute>
-              <Layout>
-                <Projects />
-              </Layout>
+              <DndProvider backend={HTML5Backend}>
+                <Layout>
+                  <Projects />
+                </Layout>
+              </DndProvider>
             </PrivateRoute>
           }
         />

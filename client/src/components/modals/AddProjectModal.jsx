@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Select from 'react-select'
+import Error from '../ui/Error'
 import { Modal } from 'react-daisyui'
 import { useGetTeamQuery } from '../../features/team/teamApi'
 import { useAddProjectsMutation } from '../../features/projects/projectsApi'
 import { Button, Checkbox, Label, TextInput } from 'flowbite-react'
 
 const AddProjectModal = ({ visible, toggleVisible }) => {
-  const catagoryOptions = {}
   const user = useSelector((state) => state.auth.user)
   const { email } = user
+  const [error, setError] = useState(null)
+  const [name, setName] = useState('')
   const [catagory, setCatagory] = useState({
     value: '',
     label: 'select a catagory',
@@ -18,19 +20,34 @@ const AddProjectModal = ({ visible, toggleVisible }) => {
 
   const { data: teamData, isSuccess: isTeamDataSuccess } =
     useGetTeamQuery(email)
-console.log(' 🔔 19 👉 AddProjectModal.jsx 👉 teamData:', teamData);
   const [addProject, { isError: isProjectError, isSuccess: isProjectSuccess }] =
     useAddProjectsMutation()
-  const [name, setName] = useState('')
-
+  useEffect(() => {
+    if (visible) {
+      if (catagory.value !== '') {
+        setError(null)
+      }
+    }
+  }, [visible,catagory])
+  useEffect(() => {
+    if (!visible) {
+      setName('')
+      setError(null)
+      setCatagory({
+        value: '',
+        label: 'select a catagory',
+        color: '',
+      })
+    }
+  }, [visible])
   useEffect(() => {
     if (!isProjectError && isProjectSuccess) {
       setName('')
-        setCatagory({
-    value: '',
-    label: 'select a catagory',
-    color: '',
-  })
+      setCatagory({
+        value: '',
+        label: 'select a catagory',
+        color: '',
+      })
       toggleVisible()
     }
   }, [isProjectError, isProjectSuccess])
@@ -41,26 +58,30 @@ console.log(' 🔔 19 👉 AddProjectModal.jsx 👉 teamData:', teamData);
         label: el.catagory.type,
         value: index + 1,
         color: el.catagory.color,
-        assignedUsers: el.assignedUsers
+        assignedUsers: el.assignedUsers,
       }
     })
   const handleSubmit = (e) => {
     e.preventDefault()
-    addProject({
-      userEmail: email,
-      data: {
-        name,
-        catagory: {
-          label: catagory.label,
-          value: catagory.label,
-          color: catagory.color,
+    if (catagory.value === '') {
+      setError('Please select a Catagory!')
+    } else if (catagory.value !== '') {
+      addProject({
+        userEmail: email,
+        data: {
+          name,
+          catagory: {
+            label: catagory.label,
+            value: catagory.label,
+            color: catagory.color,
+          },
+          stage: 'backlog',
+          assignedUsers: catagory.assignedUsers,
+          Creator: user,
+          timestamp: new Date().getTime(),
         },
-        stage: 'backlog',
-        assignedUsers:catagory.assignedUsers,
-        Creator: user,
-        timestamp: new Date().getTime(),
-      },
-    })
+      })
+    }
   }
 
   return (
@@ -69,6 +90,7 @@ console.log(' 🔔 19 👉 AddProjectModal.jsx 👉 teamData:', teamData);
         <Modal.Header className='font-bold'>Add team</Modal.Header>
 
         <Modal.Body>
+          {error && <Error message={error} />}
           <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
             <div>
               <div className='mb-2 block'>

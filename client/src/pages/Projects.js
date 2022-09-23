@@ -14,7 +14,6 @@ const Projects = () => {
     isSuccess,
     error,
   } = useGetProjectsQuery(userEmail) || {}
-  console.log(' 🔔 12 👉 Projects.js 👉 getProjectData:', getProjectData)
   const [visible, setVisible] = useState(false)
   const [backlogContentCount, setBacklogContentCount] = useState(0)
   const [readyContentCount, setReadyContentCount] = useState(0)

@@ -1,21 +1,46 @@
 import moment from 'moment'
-import { useDeleteProjectMutation } from '../features/projects/projectsApi'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import {
+  useDeleteProjectMutation,
+} from '../features/projects/projectsApi'
 const ProjectItem = ({ project, userEmail }) => {
-  const { id, name, Creator, catagory, timestamp,stage } = project || {}
+  const { id, name, Creator, catagory, timestamp, stage } = project || {}
   const { avatar, email } = Creator
   const { label, color } = catagory
-const [deleteProject] = useDeleteProjectMutation()
+  const [deleteProject] = useDeleteProjectMutation()
+  const [border, setBorder] = useState(false)
+  const { search } = useSelector((state) => state.projects)
+  useEffect(() => {
+    if (search.length > 0) {
+      const match = search.find((el) => el.id == id)
+      if (match) {
+        setBorder(true)
+      }else {
+      setBorder(false)
+    }
+
+    } else {
+      setBorder(false)
+    }
+  }, [search])
+
   const handleRemove = () => {
-    deleteProject({id,userEmail})
+    deleteProject({ id, userEmail })
   }
   return (
     <>
       <div
-        className='relative flex flex-col items-start p-4 mt-3 bg-white rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100'
+        className={`${
+          border && 'border-2 border-blue-500'
+        } relative flex flex-col items-start p-4 mt-3 bg-white rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100`}
         draggable='true'
       >
         {userEmail === email && stage === 'backlog' ? (
-          <button onClick={handleRemove} className='absolute top-0 right-2  items-center justify-center hidden w-5 h-5 mt-3 mr-2 text-gray-500 rounded hover:bg-gray-200 hover:text-gray-700 group-hover:flex'>
+          <button
+            onClick={handleRemove}
+            className='absolute top-0 right-2  items-center justify-center hidden w-5 h-5 mt-3 mr-2 text-gray-500 rounded hover:bg-gray-200 hover:text-gray-700 group-hover:flex'
+          >
             <img src='https://img.icons8.com/external-those-icons-flat-those-icons/24/000000/external-Remove-interface-those-icons-flat-those-icons.png' />
           </button>
         ) : (

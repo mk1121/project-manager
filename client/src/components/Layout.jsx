@@ -1,11 +1,35 @@
 import { Link, useMatch } from 'react-router-dom'
 import logo from '../assets/images/logo.svg'
 import { useDispatch, useSelector } from 'react-redux'
+import { search } from '../features/projects/projectsSlice'
 import { userLoggedOut } from '../features/auth/authSlice'
+import { useEffect, useState } from 'react'
+import useDebounce from '../hooks/useDebounce'
+import { apiSlice } from '../features/api/apiSlice'
+import { useGetProjectsSearchQuery } from '../features/projects/projectsApi'
 const Layout = ({ children }) => {
   const user = useSelector((state) => state.auth.user)
   const dispatch = useDispatch()
   let match = useMatch('/team')
+  const [input, setInput] = useState('')
+  useDebounce(
+    async() => {
+      if (input !== '') {
+        const data = await dispatch(
+          apiSlice.endpoints.getProjectsSearch.initiate(input)
+        )
+        dispatch(search(data.data))
+      }else{
+        dispatch(search([]))
+      }
+    },
+    [input],
+    500
+  )
+  const handleSearch = (e) => {
+    setInput(e.target.value)
+  }
+
   const logout = () => {
     dispatch(userLoggedOut())
     localStorage.removeItem('auth')
@@ -18,6 +42,8 @@ const Layout = ({ children }) => {
           <img src={logo} className='h-10 w-10' />
 
           <input
+            value={input}
+            onChange={handleSearch}
             className={`${
               match && 'hidden'
             } flex items-center h-10 px-4 ml-10 text-sm bg-gray-200 rounded-full focus:outline-none focus:ring`}
@@ -43,17 +69,13 @@ const Layout = ({ children }) => {
               }`}
               to='/team'
             >
-
               Team
             </Link>
           </div>
           <div className='dropdown dropdown-end flex items-center  w-full h-16 px-10 bg-white bg-opacity-75'>
             {' '}
             <button className='flex items-center justify-center w-8 h-8 ml-auto overflow-hidden rounded-full cursor-pointer'>
-              <img
-                src={user.avatar}
-                alt=''
-              />
+              <img src={user.avatar} alt='' />
             </button>
             <ul
               tabIndex={0}
