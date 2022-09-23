@@ -39,11 +39,9 @@ function App() {
           path='/projects'
           element={
             <PrivateRoute>
-              <DndProvider backend={HTML5Backend}>
-                <Layout>
-                  <Projects />
-                </Layout>
-              </DndProvider>
+              <Layout>
+                <Projects />
+              </Layout>
             </PrivateRoute>
           }
         />

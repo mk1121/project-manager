@@ -1,6 +1,8 @@
 import moment from 'moment'
+import { useDrag } from 'react-dnd'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import {ItemTypes} from '../utils/ItemTypes'
 import {
   useDeleteProjectMutation,
 } from '../features/projects/projectsApi'
@@ -11,6 +13,15 @@ const ProjectItem = ({ project, userEmail }) => {
   const [deleteProject] = useDeleteProjectMutation()
   const [border, setBorder] = useState(false)
   const { search } = useSelector((state) => state.projects)
+  const {BACKLOG,READY,DOING,REVIEW,BLOCKED,DONE} = ItemTypes
+    const [{isDragging}, drag] = useDrag(() => ({
+    type: stage === BACKLOG ? BACKLOG : stage === READY ? READY : stage === DOING ? DOING :
+    stage === REVIEW ? REVIEW : stage === BLOCKED ? BLOCKED : stage === DONE ? DONE : null,
+    item: {id},
+    collect: monitor => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }),[id])
   useEffect(() => {
     if (search.length > 0) {
       const match = search.find((el) => el.id == id)
@@ -31,6 +42,7 @@ const ProjectItem = ({ project, userEmail }) => {
   return (
     <>
       <div
+        ref={drag}
         className={`${
           border && 'border-2 border-blue-500'
         } relative flex flex-col items-start p-4 mt-3 bg-white rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100`}
