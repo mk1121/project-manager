@@ -47,11 +47,12 @@ const Projects = () => {
     })
   }
   const handleDeleteDrop = (item) => {
-    const { id, Creator } = item
-    if (Creator.email === userEmail) {
+    const { id, Creator,stage } = item
+    if (Creator.email === userEmail && stage === 'backlog' ) {
       setResponseError(null)
       deleteProject({ id, userEmail })
-    } else {
+    }
+    else {
       setResponseError(true)
     }
   }

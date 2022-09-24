@@ -13,13 +13,13 @@ const ProjectItem = ({ project, userEmail }) => {
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: stage,
-      item: { id, Creator },
+      item: { id, Creator,stage },
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
         opacity: monitor.isDragging() ? 0.4 : 1,
       }),
     }),
-    [id, stage]
+    [id, Creator,stage]
   )
   useEffect(() => {
     if (search.length > 0) {
