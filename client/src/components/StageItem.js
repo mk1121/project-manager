@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useDrop } from 'react-dnd'
 import Error from './ui/Error'
 import AddProjectModal from './modals/AddProjectModal'
 import ProjectItem from './ProjectItem'
@@ -7,13 +8,32 @@ const StageItem = ({
   isError,
   error,
   getProjectData,
+  stageNames,
   stageName,
   toggleVisible,
   visible,
   userEmail,
+  onDrop,
 }) => {
   const [contentCount, setContentCount] = useState(0)
-
+  const [{ isOver, canDrop }, drop] = useDrop(
+    () => ({
+      accept: stageNames.filter((el) => el !== stageName),
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      }),
+      drop: (item) => onDrop(item),
+    }),
+    [stageNames, stageName]
+  )
+  const isActive = isOver && canDrop
+  let opacity = '100%'
+  if (isActive) {
+    opacity = '100%'
+  } else if (canDrop) {
+    opacity = '60%'
+  }
   useEffect(() => {
     if (!isLoading && !isError && getProjectData?.length > 0) {
       const count = getProjectData.filter((el) => el.stage === stageName)
@@ -49,7 +69,11 @@ const StageItem = ({
       ))
   }
   return (
-    <div className='flex flex-col flex-shrink-0 w-72'>
+    <div
+      ref={drop}
+      className={`flex flex-col flex-shrink-0 w-72`}
+      style={{ opacity }}
+    >
       <div className='flex items-center flex-shrink-0 h-10 px-2'>
         <span className='block text-sm font-semibold'>
           {stageName !== '' &&
@@ -61,7 +85,9 @@ const StageItem = ({
         <button
           disabled={stageName !== 'backlog'}
           onClick={toggleVisible}
-          className={`${stageName !== 'backlog' ? 'hidden' : ''} flex items-center justify-center w-6 h-6 ml-auto text-indigo-500 rounded hover:bg-indigo-500 hover:text-indigo-100`}
+          className={`${
+            stageName !== 'backlog' ? 'hidden' : ''
+          } flex items-center justify-center w-6 h-6 ml-auto text-indigo-500 rounded hover:bg-indigo-500 hover:text-indigo-100`}
         >
           <svg
             className='w-5 h-5'

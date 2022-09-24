@@ -2,10 +2,7 @@ import moment from 'moment'
 import { useDrag } from 'react-dnd'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import {ItemTypes} from '../utils/ItemTypes'
-import {
-  useDeleteProjectMutation,
-} from '../features/projects/projectsApi'
+import { useDeleteProjectMutation } from '../features/projects/projectsApi'
 const ProjectItem = ({ project, userEmail }) => {
   const { id, name, Creator, catagory, timestamp, stage } = project || {}
   const { avatar, email } = Creator
@@ -13,24 +10,25 @@ const ProjectItem = ({ project, userEmail }) => {
   const [deleteProject] = useDeleteProjectMutation()
   const [border, setBorder] = useState(false)
   const { search } = useSelector((state) => state.projects)
-  const {BACKLOG,READY,DOING,REVIEW,BLOCKED,DONE} = ItemTypes
-    const [{isDragging}, drag] = useDrag(() => ({
-    type: stage === BACKLOG ? BACKLOG : stage === READY ? READY : stage === DOING ? DOING :
-    stage === REVIEW ? REVIEW : stage === BLOCKED ? BLOCKED : stage === DONE ? DONE : null,
-    item: {id},
-    collect: monitor => ({
-      isDragging: !!monitor.isDragging(),
+  const [{ isDragging }, drag] = useDrag(
+    () => ({
+      type: stage,
+      item: { id, Creator },
+      collect: (monitor) => ({
+        isDragging: !!monitor.isDragging(),
+        opacity: monitor.isDragging() ? 0.4 : 1,
+      }),
     }),
-  }),[id])
+    [id, stage]
+  )
   useEffect(() => {
     if (search.length > 0) {
       const match = search.find((el) => el.id == id)
       if (match) {
         setBorder(true)
-      }else {
-      setBorder(false)
-    }
-
+      } else {
+        setBorder(false)
+      }
     } else {
       setBorder(false)
     }
@@ -81,7 +79,6 @@ const ProjectItem = ({ project, userEmail }) => {
             {moment(timestamp).format('MMM Do')}
             <span className='ml-1 leading-none'></span>
           </div>
-
           <img className='w-6 h-6 ml-auto rounded-full' src={avatar} />
         </div>
       </div>

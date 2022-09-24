@@ -11,7 +11,6 @@ const Team = () => {
     data: getTeamData,
     isError,
     isLoading,
-    isSuccess,
     error,
   } = useGetTeamQuery(email) || {}
   const [visible, setVisible] = useState(false)

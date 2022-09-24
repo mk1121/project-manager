@@ -1,6 +1,6 @@
 import { Modal } from 'react-daisyui'
 import Error from '../ui/Error'
-import { Button, Checkbox, Label, TextInput } from 'flowbite-react'
+import { Button, Label, TextInput } from 'flowbite-react'
 import Select from 'react-select'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'

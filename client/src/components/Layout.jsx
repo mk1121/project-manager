@@ -3,23 +3,22 @@ import logo from '../assets/images/logo.svg'
 import { useDispatch, useSelector } from 'react-redux'
 import { search } from '../features/projects/projectsSlice'
 import { userLoggedOut } from '../features/auth/authSlice'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import useDebounce from '../hooks/useDebounce'
 import { apiSlice } from '../features/api/apiSlice'
-import { useGetProjectsSearchQuery } from '../features/projects/projectsApi'
 const Layout = ({ children }) => {
   const user = useSelector((state) => state.auth.user)
   const dispatch = useDispatch()
   let match = useMatch('/team')
   const [input, setInput] = useState('')
   useDebounce(
-    async() => {
+    async () => {
       if (input !== '') {
         const data = await dispatch(
           apiSlice.endpoints.getProjectsSearch.initiate(input)
         )
         dispatch(search(data.data))
-      }else{
+      } else {
         dispatch(search([]))
       }
     },

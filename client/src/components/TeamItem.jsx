@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import AddTeamModal from './modals/AddTeamModal'
 import { useDeleteTeamMutation } from '../features/team/teamApi'
 import { useSelector } from 'react-redux'

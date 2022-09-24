@@ -5,7 +5,7 @@ import Error from '../ui/Error'
 import { Modal } from 'react-daisyui'
 import { useGetTeamQuery } from '../../features/team/teamApi'
 import { useAddProjectsMutation } from '../../features/projects/projectsApi'
-import { Button, Checkbox, Label, TextInput } from 'flowbite-react'
+import { Button, Label, TextInput } from 'flowbite-react'
 
 const AddProjectModal = ({ visible, toggleVisible }) => {
   const user = useSelector((state) => state.auth.user)
@@ -28,7 +28,7 @@ const AddProjectModal = ({ visible, toggleVisible }) => {
         setError(null)
       }
     }
-  }, [visible,catagory])
+  }, [visible, catagory])
   useEffect(() => {
     if (!visible) {
       setName('')

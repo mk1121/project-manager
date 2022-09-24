@@ -26,6 +26,25 @@ export const projectsApi = apiSlice.injectEndpoints({
         // update messages cache pessimistically end
       },
     }),
+
+    editProjects: builder.mutation({
+      query: ({ id, data, userEmail }) => ({
+        url: `/projects/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      async onQueryStarted({ id, userEmail }, { queryFulfilled, dispatch }) {
+        const queryData = await queryFulfilled
+        // update conversation cache pessimistically start
+        dispatch(
+          apiSlice.util.updateQueryData('getProjects', userEmail, (draft) => {
+            const newDraft = draft.find((el) => el.id == id)
+            newDraft.stage = queryData?.data?.stage
+          })
+        )
+        // update messages cache pessimistically end
+      },
+    }),
     deleteProject: builder.mutation({
       query: ({ id, userEmail }) => ({
         url: `/projects/${id}`,
@@ -52,4 +71,5 @@ export const {
   useAddProjectsMutation,
   useDeleteProjectMutation,
   useGetProjectsSearchQuery,
+  useEditProjectsMutation,
 } = projectsApi
