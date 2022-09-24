@@ -1,55 +1,37 @@
-# lws-json-server-todos
+## Deploy JSON Server to Vercel
 
-Example in memory todos api with json-server by Learn with Sumit
+A template to deploy [JSON Server](https://github.com/typicode/json-server) to [Vercel](https://vercel.com), allow you to run fake REST API online!
 
-# Installation
+Demo from this repository: 
 
-```bash
-git clone git@github.com:learnwithsumit/lws-json-server-todos.git
-cd lws-json-server-todos
-npm install json-server
-npm start
+1. https://json-server-in.vercel.app
+2. https://json-server-in.vercel.app/api/posts
+
+### How to use
+
+1. Click "**Use this template**" or clone this repository.
+2. Update or use the default [`db.json`](./db.json) in the repository.
+3. Sign Up or login into [Vercel](https://vercel.com).
+4. From the Vercel dashboard, click "**+ New Project**" then "**Import**" your repository.
+5. In the "**Configure Project**" screen, leave everything default and click "**Deploy**".
+6. Wait until deployment is done, and your own JSON server is ready to serve!
+
+## Default `db.json`
+
+```json
+{
+  "posts": [
+    { "id": 1, "title": "json-server", "author": "typicode" }
+  ],
+  "comments": [
+    { "id": 1, "body": "some comment", "postId": 1 }
+  ],
+  "profile": { "name": "typicode" }
+}
 ```
 
-Now opens:
+## Reference
 
-- http://localhost:3000
-
-You now have a full REST API. Test with POSTMAN or any other REST Client):
-
-Retrieve all (GET):
-
-```bash
-GET http://localhost:3000/todos
-```
-
-Retrieve one (GET):
-
-```bash
-GET http://localhost:3000/todos/1
-```
-
-Post a todo (POST):
-
-```bash
-POST http://localhost:3000/todos text="Learn Redux" completed=false color="red"
-```
-
-Update todo (PUT):
-
-```bash
-PUT http://localhost:3000/todos/3 name="Learn Redux with Learn with Sumit" completed=true color="green"
-```
-
-Delete todo (DELETE):
-
-```bash
-DELETE http://localhost:3000/todos/1
-```
-
-
-# Links
-
-- https://github.com/typicode/json-server
-- Jswon view Chrome plugin: https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc
-- Learn with Sumit official website: htts://learnwithsumit.com
+1. https://github.com/typicode/json-server
+2. https://vercel.com
+3. https://shadowsmith.com/how-to-deploy-an-express-api-to-vercel
