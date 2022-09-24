@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Select from 'react-select'
 import Error from '../ui/Error'
-import { Modal } from 'react-daisyui'
+import { Modal, Button, Input } from 'react-daisyui'
 import { useGetTeamQuery } from '../../features/team/teamApi'
 import { useAddProjectsMutation } from '../../features/projects/projectsApi'
-import { Button, Label, TextInput } from 'flowbite-react'
 
 const AddProjectModal = ({ visible, toggleVisible }) => {
   const user = useSelector((state) => state.auth.user)
@@ -94,9 +93,11 @@ const AddProjectModal = ({ visible, toggleVisible }) => {
           <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
             <div>
               <div className='mb-2 block'>
-                <Label htmlFor='teamName1' value='Enter project title' />
+                <label className='label'>
+                  <span className='label-text'>Enter project title</span>
+                </label>
               </div>
-              <TextInput
+              <Input
                 id='teamName1'
                 type='text'
                 value={name}
@@ -107,7 +108,9 @@ const AddProjectModal = ({ visible, toggleVisible }) => {
             </div>
             <div id='select'>
               <div className='mb-2 block'>
-                <Label htmlFor='colors' value='Select Catagory' />
+                <label className='label'>
+                  <span className='label-text'>Select Catagory</span>
+                </label>
               </div>
               <Select
                 value={catagory}

@@ -1,6 +1,5 @@
-import { Modal } from 'react-daisyui'
+import { Modal, Button, Input } from 'react-daisyui'
 import Error from '../ui/Error'
-import { Button, Label, TextInput } from 'flowbite-react'
 import Select from 'react-select'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -172,9 +171,11 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
           <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
             <div>
               <div className='mb-2 block'>
-                <Label htmlFor='teamName1' value='Team Name' />
+                <label className='label'>
+                  <span className='label-text'>Team Name</span>
+                </label>
               </div>
-              <TextInput
+              <Input
                 id='teamName1'
                 type='text'
                 value={name}
@@ -185,9 +186,11 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
             </div>
             <div>
               <div className='mb-2 block'>
-                <Label htmlFor='teamDescription1' value='Description' />
+                <label className='label'>
+                  <span className='label-text'>Description</span>
+                </label>
               </div>
-              <TextInput
+              <Input
                 id='teamDescription1'
                 type='text'
                 required={true}
@@ -199,7 +202,9 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
             <div>
               <div id='select'>
                 <div className='mb-2 block'>
-                  <Label htmlFor='colors' value='Select Catagory' />
+                  <label htmlFor='colors' className='label'>
+                    <span className='label-text'>Select Catagory</span>
+                  </label>
                 </div>
                 <Select
                   value={catagory}
@@ -214,7 +219,9 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
 
             <div id='select'>
               <div className='mb-2 block'>
-                <Label htmlFor='member' value='Select Member' />
+                <label htmlFor='member' className='label'>
+                  <span className='label-text'>Select Member</span>
+                </label>
               </div>
               <Select
                 value={member}

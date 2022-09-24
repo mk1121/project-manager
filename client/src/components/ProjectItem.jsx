@@ -57,7 +57,7 @@ const ProjectItem = ({ project, userEmail }) => {
           <></>
         )}
         <span
-          className={`flex items-center h-6 px-3 text-xs font-semibold text-${color}-500 bg-pink-100 rounded-full`}
+          className={`flex items-center h-6 px-3 text-xs font-semibold text-${color}-500 bg-${color}-100 rounded-full`}
         >
           {label}
         </span>
