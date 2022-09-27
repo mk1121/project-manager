@@ -11,6 +11,7 @@ const Team = () => {
     data: getTeamData,
     isError,
     isLoading,
+    isSuccess,
     error,
   } = useGetTeamQuery(email) || {}
   const [visible, setVisible] = useState(false)
@@ -33,7 +34,7 @@ const Team = () => {
     content = getTeamData
       .slice()
       .sort((a, b) => b.timestamp - a.timestamp)
-      .map((team) => <TeamItem team={team} key={team.id} />)
+      .map((team) => <TeamItem team={team} isSuccess={isSuccess} key={team.id} />)
   }
   return (
     <>

@@ -56,7 +56,7 @@ export const projectsApi = apiSlice.injectEndpoints({
         // update conversation cache pessimistically start
         dispatch(
           apiSlice.util.updateQueryData('getProjects', userEmail, (draft) => {
-            const projectsFilter = draft.filter((t) => t.id != id)
+            const projectsFilter = draft?.filter((t) => t.id != id)
 
             return (draft = [...projectsFilter])
           })

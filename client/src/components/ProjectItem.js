@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useDeleteProjectMutation } from '../features/projects/projectsApi'
 const ProjectItem = ({ project, userEmail }) => {
-  const { id, name, Creator, catagory, timestamp, stage } = project || {}
+  const { id, name, Creator, assignedTeam, timestamp, stage } = project || {}
   const { avatar, email } = Creator
-  const { label, color } = catagory
+  const { label:teamName,bgColor, textColor } = assignedTeam || {}
   const [deleteProject] = useDeleteProjectMutation()
   const [border, setBorder] = useState(false)
   const { search } = useSelector((state) => state.projects)
@@ -57,9 +57,9 @@ const ProjectItem = ({ project, userEmail }) => {
           <></>
         )}
         <span
-          className={`flex items-center h-6 px-3 text-xs font-semibold text-${color}-500 bg-${color}-100 rounded-full`}
+          className={`flex items-center h-6 px-3 text-xs font-semibold ${bgColor} ${textColor} rounded-full`}
         >
-          {label}
+          {teamName}
         </span>
         <h4 className='mt-3 text-sm font-medium'>{name}</h4>
         <div className='flex items-center w-full mt-3 text-xs font-medium text-gray-400'>

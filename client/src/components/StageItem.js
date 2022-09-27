@@ -35,7 +35,7 @@ const StageItem = ({
     opacity = '60%'
   }
   useEffect(() => {
-    if (!isLoading && !isError && getProjectData?.length > 0) {
+    if (!isLoading && !isError && getProjectData?.length >= 0) {
       const count = getProjectData.filter((el) => el.stage === stageName)
       setContentCount(count.length)
     }

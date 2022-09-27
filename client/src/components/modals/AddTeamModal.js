@@ -12,7 +12,7 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
   const {
     id: teamId,
     name: teamName,
-    catagory: teamCatagory,
+    color: teamColor,
     description: teamDescription,
     assignedUsers: teamAssignedUsers,
   } = team || {}
@@ -20,12 +20,10 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
   const [name, setName] = useState('')
   const [error, setError] = useState(null)
   const [description, setDescription] = useState('')
-  const [catagory, setCatagory] = useState({
+  const [color, setColor] = useState({
     value: '',
-    label: 'select a catagory',
-    color: '',
+    label: 'select a color',
   })
-  const [color, setColor] = useState()
   const [member, setMember] = useState([])
   const user = useSelector((state) => state.auth.user)
   const { email: userEmail } = user || {}
@@ -43,41 +41,41 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
   if (btnAction === 'add') {
   }
 
-  const catagoryOptions = [
-    { value: 'dev', label: 'dev', color: 'red' },
-    { value: 'design', label: 'design', color: 'pink' },
-    { value: 'security', label: 'security', color: 'blue' },
+  const colorOptions = [
+    { label: 'red', value: 'red' },
+    { value: 'green', label: 'green' },
+    { value: 'yellow', label: 'yellow' },
+    { value: 'purple', label: 'purple' },
+    { value: 'gray', label: 'gray' },
+    { value: 'blue', label: 'blue' },
   ]
   useEffect(() => {
     if (visible) {
       if (btnAction === 'add') {
-        if (catagory.value !== '') {
+        if (color.value !== '') {
           setError(null)
         }
         if (!visible) {
-          setColor('')
-          setName('')
-          setCatagory({
+          setColor({
             value: '',
-            label: 'select a catagory',
-            color: '',
+            label: 'select a color',
           })
+          setName('')
           setDescription('')
           setError(null)
         }
       }
     }
-  }, [visible, catagory])
+  }, [visible, color])
   useEffect(() => {
     if (visible) {
       if (btnAction === 'edit') {
         setTeamActionName('Edit')
         setName(teamName)
         setDescription(teamDescription)
-        setCatagory({
-          value: teamCatagory.type,
-          label: teamCatagory.type,
-          color: teamCatagory.color,
+        setColor({
+          value: teamColor.value,
+          label: teamColor.label,
         })
         const memberList = teamAssignedUsers
           .filter((el) => el.email !== user.email)
@@ -94,11 +92,9 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
   useEffect(() => {
     if ((!isError && isSuccess) || (!isEditError && isEditSuccess)) {
       if (btnAction === 'add') {
-        setColor('')
-        setCatagory({
+        setColor({
           value: '',
-          label: 'select a catagory',
-          color: '',
+          label: 'select a color',
         })
 
         setName('')
@@ -111,15 +107,20 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (btnAction === 'add') {
-      if (catagory.value === '') {
-        setError('Please select a Catagory!')
-      } else if (catagory.value !== '') {
+      if (color.value === '') {
+        setError('Please select a Color!')
+      } else if (color.value !== '') {
         addTeam({
           userEmail,
           data: {
             name,
             description,
-            catagory: { type: catagory.value, color: catagory.color },
+            color: {
+              value: color.value,
+              label: color.label,
+              bgColor: `bg-${color.value}-100`,
+              textColor: `text-${color.value}-500`,
+            },
             assignedUsers: [
               { name: user.name, email: user.email },
               ...member.map((el) => {
@@ -138,7 +139,12 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
         data: {
           name,
           description,
-          catagory: { type: catagory.value, color: catagory.color },
+          color: {
+            value: color.value,
+            label: color.label,
+            bgColor: `bg-${color.value}-100`,
+            textColor: `text-${color.value}-500`,
+          },
           assignedUsers: [
             { name: user.name, email: user.email },
             ...member.map((el) => {
@@ -203,16 +209,16 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
               <div id='select'>
                 <div className='mb-2 block'>
                   <label htmlFor='colors' className='label'>
-                    <span className='label-text'>Select Catagory</span>
+                    <span className='label-text'>Select Color</span>
                   </label>
                 </div>
                 <Select
-                  value={catagory}
-                  name='catagory'
-                  options={catagoryOptions}
-                  onChange={(e) => setCatagory(e)}
+                  value={color}
+                  name='color'
+                  options={colorOptions}
+                  onChange={(e) => setColor(e)}
                   className='basic-multi-select'
-                  classNamePrefix='Select Catagory'
+                  classNamePrefix='Select Color'
                 />
               </div>
             </div>

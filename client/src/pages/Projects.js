@@ -1,5 +1,5 @@
 import StageItem from '../components/StageItem'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
   useDeleteProjectMutation,
@@ -56,6 +56,10 @@ const Projects = () => {
       setResponseError(true)
     }
   }
+  useEffect(()=>{
+    if(canDrop)
+    setResponseError(null)
+  },[canDrop])
   return (
     <>
       <div className='relative flex flex-col justify-center px-10 mt-6'>

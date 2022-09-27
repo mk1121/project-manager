@@ -1,19 +1,18 @@
 import moment from 'moment'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AddTeamModal from './modals/AddTeamModal'
 import { useDeleteTeamMutation } from '../features/team/teamApi'
 import { useSelector } from 'react-redux'
-const TeamItem = ({ team }) => {
+const TeamItem = ({ team,isSuccess:isTeamSuccess }) => {
   const [deleteTeam, { isError, isSuccess, isLoading }] =
     useDeleteTeamMutation()
   const user = useSelector((state) => state.auth.user)
   const { email: userEmail } = user || {}
   const [unValidEmail, setunValidEmail] = useState('')
-  const { id, description, timestamp, catagory, assignedUsers } = team || {}
-  const { type: name, color } = catagory || {}
+  const { id, name, description, timestamp, color, assignedUsers } = team || {}
   const [visible, setVisible] = useState(false)
   const [responseError, setResponseError] = useState('')
-
+  const { bgColor, textColor } = color || {}
   const toggleVisible = () => {
     setVisible(!visible)
     setunValidEmail('')
@@ -72,7 +71,7 @@ const TeamItem = ({ team }) => {
         assignedUsers={assignedUsers}
       />
       <span
-        className={`flex  items-center h-6 px-3 text-xs font-semibold text-${color}-500 bg-${color}-100 rounded-full`}
+        className={`flex  items-center h-6 px-3 text-xs font-semibold ${isTeamSuccess ? textColor : ''}  ${isTeamSuccess ? bgColor : ''} rounded-full`}
       >
         {name}
       </span>

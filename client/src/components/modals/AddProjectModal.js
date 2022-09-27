@@ -11,10 +11,9 @@ const AddProjectModal = ({ visible, toggleVisible }) => {
   const { email } = user
   const [error, setError] = useState(null)
   const [name, setName] = useState('')
-  const [catagory, setCatagory] = useState({
+  const [assignedTeam, setAssignedTeam] = useState({
     value: '',
-    label: 'select a catagory',
-    color: '',
+    label: 'select a team',
   })
 
   const { data: teamData, isSuccess: isTeamDataSuccess } =
@@ -23,59 +22,59 @@ const AddProjectModal = ({ visible, toggleVisible }) => {
     useAddProjectsMutation()
   useEffect(() => {
     if (visible) {
-      if (catagory.value !== '') {
+      if (assignedTeam.value !== '') {
         setError(null)
       }
     }
-  }, [visible, catagory])
+  }, [visible, assignedTeam])
   useEffect(() => {
     if (!visible) {
       setName('')
       setError(null)
-      setCatagory({
+      setAssignedTeam({
         value: '',
-        label: 'select a catagory',
-        color: '',
+        label: 'select a team',
       })
     }
   }, [visible])
   useEffect(() => {
     if (!isProjectError && isProjectSuccess) {
       setName('')
-      setCatagory({
+      setAssignedTeam({
         value: '',
-        label: 'select a catagory',
-        color: '',
+        label: 'select a team',
       })
       toggleVisible()
     }
   }, [isProjectError, isProjectSuccess])
-  const teamCatagory =
+  const teamAssigned =
     isTeamDataSuccess &&
-    teamData.map((el, index) => {
+    teamData.map((el) => {
       return {
-        label: el.catagory.type,
-        value: index + 1,
-        color: el.catagory.color,
+        label: el.name,
+        value: el.id,
+        bgColor: el.color.bgColor,
+        textColor: el.color.textColor,
         assignedUsers: el.assignedUsers,
       }
     })
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (catagory.value === '') {
-      setError('Please select a Catagory!')
-    } else if (catagory.value !== '') {
+    if (assignedTeam.value === '') {
+      setError('Please select a Team!')
+    } else if (assignedTeam.value !== '') {
       addProject({
         userEmail: email,
         data: {
           name,
-          catagory: {
-            label: catagory.label,
-            value: catagory.label,
-            color: catagory.color,
+          assignedTeam: {
+            label: assignedTeam.label,
+            value: assignedTeam.value,
+            bgColor: assignedTeam.bgColor,
+            textColor: assignedTeam.textColor,
+            assignedUsers: assignedTeam.assignedUsers,
           },
           stage: 'backlog',
-          assignedUsers: catagory.assignedUsers,
           Creator: user,
           timestamp: new Date().getTime(),
         },
@@ -109,16 +108,16 @@ const AddProjectModal = ({ visible, toggleVisible }) => {
             <div id='select'>
               <div className='mb-2 block'>
                 <label className='label'>
-                  <span className='label-text'>Select Catagory</span>
+                  <span className='label-text'>Select Team</span>
                 </label>
               </div>
               <Select
-                value={catagory}
-                name='catagory'
-                options={teamCatagory}
-                onChange={(e) => setCatagory(e)}
+                value={assignedTeam}
+                name='assignedTeam'
+                options={teamAssigned}
+                onChange={(e) => setAssignedTeam(e)}
                 className='basic-multi-select'
-                classNamePrefix='Select Catagory'
+                classNamePrefix='Select Team'
               />
             </div>
             <Button type='submit'>Submit</Button>
