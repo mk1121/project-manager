@@ -47,19 +47,17 @@ const Projects = () => {
     })
   }
   const handleDeleteDrop = (item) => {
-    const { id, Creator,stage } = item
-    if (Creator.email === userEmail && stage === 'backlog' ) {
+    const { id, Creator, stage } = item
+    if (Creator.email === userEmail && stage === 'backlog') {
       setResponseError(null)
       deleteProject({ id, userEmail })
-    }
-    else {
+    } else {
       setResponseError(true)
     }
   }
-  useEffect(()=>{
-    if(canDrop)
-    setResponseError(null)
-  },[canDrop])
+  useEffect(() => {
+    if (canDrop) setResponseError(null)
+  }, [canDrop])
   return (
     <>
       <div className='relative flex flex-col justify-center px-10 mt-6'>

@@ -40,6 +40,10 @@ export const projectsApi = apiSlice.injectEndpoints({
           apiSlice.util.updateQueryData('getProjects', userEmail, (draft) => {
             const newDraft = draft.find((el) => el.id == id)
             newDraft.stage = queryData?.data?.stage
+            newDraft.assignedTeam.label = queryData?.data?.assignedTeam?.label
+            newDraft.assignedTeam.bgColor = queryData?.data?.assignedTeam?.bgColor
+            newDraft.assignedTeam.textColor = queryData?.data?.assignedTeam?.textColor
+            newDraft.assignedTeam.assignedUsers = queryData?.data?.assignedTeam?.assignedUsers
           })
         )
         // update messages cache pessimistically end

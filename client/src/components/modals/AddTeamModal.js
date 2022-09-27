@@ -7,6 +7,10 @@ import {
   useAddTeamMutation,
   useEditTeamMutation,
 } from '../../features/team/teamApi'
+import {
+  useGetProjectsQuery,
+  useEditProjectsMutation,
+} from '../../features/projects/projectsApi'
 import { useGetAllUserQuery } from '../../features/users/usersApi'
 const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
   const {
@@ -16,6 +20,7 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
     description: teamDescription,
     assignedUsers: teamAssignedUsers,
   } = team || {}
+
   const [teamActionName, setTeamActionName] = useState('Add')
   const [name, setName] = useState('')
   const [error, setError] = useState(null)
@@ -25,8 +30,14 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
     label: 'select a color',
   })
   const [member, setMember] = useState([])
+  const [creator, setCreator] = useState('')
   const user = useSelector((state) => state.auth.user)
   const { email: userEmail } = user || {}
+
+  const {
+    data: getProjectData,
+    error: isProjecterror,
+  } = useGetProjectsQuery(userEmail)
   const [addTeam, { isLoading, isError, isSuccess }] = useAddTeamMutation()
   const [
     editTeam,
@@ -36,6 +47,15 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
       isSuccess: isEditSuccess,
     },
   ] = useEditTeamMutation()
+
+  const [
+    editProject,
+    {
+      isLoading: isEditProjectLoading,
+      isError: isEditProjectError,
+      isSuccess: isEditProjectSuccess,
+    },
+  ] = useEditProjectsMutation()
   const { data: userList, isSuccess: isUserListSuccess } = useGetAllUserQuery()
 
   if (btnAction === 'add') {
@@ -70,6 +90,7 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
   useEffect(() => {
     if (visible) {
       if (btnAction === 'edit') {
+        setCreator(teamAssignedUsers[0])
         setTeamActionName('Edit')
         setName(teamName)
         setDescription(teamDescription)
@@ -78,7 +99,7 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
           label: teamColor.label,
         })
         const memberList = teamAssignedUsers
-          .filter((el) => el.email !== user.email)
+          .filter((el, index) => index !== 0)
           .map((el) => {
             return {
               label: el.name,
@@ -133,6 +154,29 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
       }
     }
     if (btnAction === 'edit') {
+      const editingProject =
+        !isProjecterror &&
+        getProjectData?.filter((el) => el.assignedTeam.value === teamId)
+      editingProject?.map((el) => {
+        editProject({
+          id: el.id,
+          data: {
+            assignedTeam: {
+              label: name,
+              value: teamId,
+              bgColor: `bg-${color.value}-100`,
+              textColor: `text-${color.value}-500`,
+              assignedUsers: [
+                ...el.assignedTeam.assignedUsers,
+                ...member.map((el) => {
+                  return { name: el.label, email: el.value }
+                }),
+              ],
+            },
+          },
+          userEmail,
+        })
+      })
       editTeam({
         id: teamId,
         userEmail,
@@ -146,7 +190,7 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
             textColor: `text-${color.value}-500`,
           },
           assignedUsers: [
-            { name: user.name, email: user.email },
+            { name: creator.name, email: creator.email },
             ...member.map((el) => {
               return { name: el.label, email: el.value }
             }),
@@ -159,7 +203,9 @@ const AddTeamModal = ({ btnAction, team, visible, toggleVisible }) => {
   const memberOptions =
     isUserListSuccess &&
     userList
-      .filter((el) => el.email !== user.email)
+      .filter((el) => {
+        return el.email !== creator.email
+      })
       .map((el) => {
         return {
           value: el.email,
