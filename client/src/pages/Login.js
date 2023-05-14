@@ -63,7 +63,7 @@ export default function Login() {
                   autoComplete='email'
                   required
                   className='appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-violet-500 focus:border-violet-500 focus:z-10 sm:text-sm'
-                  placeholder='Email: t1@t.co'
+                  placeholder='Email'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -79,7 +79,7 @@ export default function Login() {
                   autoComplete='current-password'
                   required
                   className='appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-violet-500 focus:border-violet-500 focus:z-10 sm:text-sm'
-                  placeholder='Password:1234'
+                  placeholder='Password'
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -98,6 +98,29 @@ export default function Login() {
 
             {error !== '' && <Error message={error} />}
           </form>
+            <div>
+              <button
+                onClick={() => {setEmail('t1@t.co'); setPassword('1234')}}
+                className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500'
+                disabled={isLoading}
+              >Test User-1</button>
+            </div>
+
+            <div>
+              <button
+                onClick={() => {setEmail('t2@t.co'); setPassword('1234')}}
+                className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500'
+                disabled={isLoading}
+              >Test User-2</button>
+            </div>
+
+            <div>
+              <button
+                onClick={() => {setEmail('t3@t.co'); setPassword('1234')}}
+                className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500'
+                disabled={isLoading}
+              >Test User-3</button>
+            </div>
         </div>
       </div>
     </div>
