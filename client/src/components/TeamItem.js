@@ -3,22 +3,29 @@ import { useEffect, useState } from 'react'
 import AddTeamModal from './modals/AddTeamModal'
 import { useDeleteTeamMutation } from '../features/team/teamApi'
 import { useSelector } from 'react-redux'
-const TeamItem = ({ team,isSuccess:isTeamSuccess }) => {
-  const [deleteTeam, { isError, isSuccess, isLoading }] =
+const TeamItem = ({ visible, toggleVisible, team, isSuccess: isTeamSuccess, btnAction, setBtnAction }) => {
+  const [deleteTeam] =
     useDeleteTeamMutation()
   const user = useSelector((state) => state.auth.user)
+  // const [teamName, setTeamName] = useState('')
   const { email: userEmail } = user || {}
   const [unValidEmail, setunValidEmail] = useState('')
   const { id, name, description, timestamp, color, assignedUsers } = team || {}
-  const [visible, setVisible] = useState(false)
   const [responseError, setResponseError] = useState('')
   const { bgColor, textColor } = color || {}
-  const toggleVisible = () => {
-    setVisible(!visible)
+  const [visibleId, setVisibleId] = useState(null)
+  useEffect(() => {
+    if (!visible)
+      setVisibleId(null)
+  }, [visible])
+  const handleEdit = (e) => {
+    setVisibleId(id)
+    setBtnAction('edit')
+    toggleVisible()
     setunValidEmail('')
     setResponseError('')
   }
-  const handleRemove = (e) => {
+  const handleRemove = () => {
     deleteTeam({ id, userEmail })
   }
   return (
@@ -27,6 +34,7 @@ const TeamItem = ({ team,isSuccess:isTeamSuccess }) => {
       draggable='true'
     >
       <img
+        alt='icon'
         className={` absolute  mt-5 top-0 right-10 flex items-center justify-center  w-5 h-5  text-gray-500 rounded hover:bg-gray-200 hover:text-gray-700 group-hover:flex`}
         src='https://img.icons8.com/external-those-icons-flat-those-icons/24/000000/external-Remove-interface-those-icons-flat-those-icons.png'
         onClick={(e) => handleRemove(e)}
@@ -50,7 +58,7 @@ const TeamItem = ({ team,isSuccess:isTeamSuccess }) => {
         >
           <li>
             <a
-              onClick={toggleVisible}
+              onClick={handleEdit}
               className='  py-2 px-4 hover:bg-blue-100 dark:hover:bg-blue-600 dark:hover:text-blue-500'
             >
               Edit
@@ -59,7 +67,8 @@ const TeamItem = ({ team,isSuccess:isTeamSuccess }) => {
         </ul>
       </div>
       <AddTeamModal
-        btnAction='edit'
+        btnAction={btnAction}
+        setBtnAction={setBtnAction}
         team={team}
         responseError={responseError}
         setResponseError={setResponseError}
@@ -69,6 +78,8 @@ const TeamItem = ({ team,isSuccess:isTeamSuccess }) => {
         toggleVisible={toggleVisible}
         visible={visible}
         assignedUsers={assignedUsers}
+        isTeamSuccess={isTeamSuccess}
+        visibleId={visibleId}
       />
       <span
         className={`flex  items-center h-6 px-3 text-xs font-semibold ${isTeamSuccess ? textColor : ''}  ${isTeamSuccess ? bgColor : ''} rounded-full`}

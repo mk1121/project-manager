@@ -6,6 +6,7 @@ import Error from '../components/ui/Error'
 import { useGetTeamQuery } from '../features/team/teamApi'
 const Team = () => {
   const user = useSelector((state) => state.auth.user)
+  const [btnAction, setBtnAction] = useState('')
   const { email } = user
   const {
     data: getTeamData,
@@ -31,17 +32,24 @@ const Team = () => {
   } else if (!isLoading && !isError && getTeamData?.length === 0) {
     content = <h4 className='m-2 text-center'>No Team found!</h4>
   } else if (!isLoading && !isError && getTeamData?.length > 0) {
-    content = getTeamData
+    content = isSuccess && getTeamData
       .slice()
       .sort((a, b) => b.timestamp - a.timestamp)
-      .map((team) => <TeamItem team={team} isSuccess={isSuccess} key={team.id} />)
+      .map((team) => <TeamItem team={team} visible={visible}
+        toggleVisible={toggleVisible} btnAction={btnAction}
+        setBtnAction={setBtnAction}
+        isSuccess={isSuccess} key={team.id} />)
+  }
+  const handleAddTeam = () => {
+    setBtnAction('add')
+    toggleVisible()
   }
   return (
     <>
       <div className='px-10 mt-6 flex justify-between'>
         <h1 className='text-2xl font-bold'>Teams</h1>
         <button
-          onClick={toggleVisible}
+          onClick={handleAddTeam}
           className='flex items-center justify-center w-6 h-6 ml-auto text-indigo-500 rounded hover:bg-indigo-500 hover:text-indigo-100'
         >
           <svg
@@ -59,7 +67,7 @@ const Team = () => {
           </svg>
         </button>
         <AddTeamModal
-          btnAction='add'
+          btnAction={btnAction}
           visible={visible}
           toggleVisible={toggleVisible}
         />

@@ -10,12 +10,12 @@ export const projectsApi = apiSlice.injectEndpoints({
       query: (input) => `/projects?name_like=${input}`,
     }),
     addProjects: builder.mutation({
-      query: ({ data, userEmail }) => ({
+      query: ({ data }) => ({
         url: '/projects',
         method: 'POST',
         body: data,
       }),
-      async onQueryStarted({ data, userEmail }, { queryFulfilled, dispatch }) {
+      async onQueryStarted({ userEmail }, { queryFulfilled, dispatch }) {
         const queryData = await queryFulfilled
         // update conversation cache pessimistically start
         dispatch(
@@ -28,7 +28,7 @@ export const projectsApi = apiSlice.injectEndpoints({
     }),
 
     editProjects: builder.mutation({
-      query: ({ id, data, userEmail }) => ({
+      query: ({ id, data }) => ({
         url: `/projects/${id}`,
         method: 'PATCH',
         body: data,
@@ -50,7 +50,7 @@ export const projectsApi = apiSlice.injectEndpoints({
       },
     }),
     deleteProject: builder.mutation({
-      query: ({ id, userEmail }) => ({
+      query: ({ id }) => ({
         url: `/projects/${id}`,
         method: 'DELETE',
       }),

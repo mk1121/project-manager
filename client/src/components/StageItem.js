@@ -39,7 +39,7 @@ const StageItem = ({
       const count = getProjectData.filter((el) => el.stage === stageName)
       setContentCount(count.length)
     }
-  }, [isLoading, isError, getProjectData])
+  }, [isLoading, isError, getProjectData, stageName])
   let content
   if (isLoading) {
     content = <h4 className='m-2 text-center'>Loading...</h4>
@@ -85,9 +85,8 @@ const StageItem = ({
         <button
           disabled={stageName !== 'backlog'}
           onClick={toggleVisible}
-          className={`${
-            stageName !== 'backlog' ? 'hidden' : ''
-          } flex items-center justify-center w-6 h-6 ml-auto text-indigo-500 rounded hover:bg-indigo-500 hover:text-indigo-100`}
+          className={`${stageName !== 'backlog' ? 'hidden' : ''
+            } flex items-center justify-center w-6 h-6 ml-auto text-indigo-500 rounded hover:bg-indigo-500 hover:text-indigo-100`}
         >
           <svg
             className='w-5 h-5'
