@@ -302,7 +302,7 @@ const AddTeamModal = ({ btnAction, setBtnAction, isTeamSuccess, team, visible, t
 
   return (
     <>
-      <Modal open={visible} onClickBackdrop={toggleVisible}>
+      <Modal open={visible} onClickBackdrop={toggleVisible} className='w-11/12 max-w-5xl'>
         <Modal.Header className='font-bold'>{btnAction} team</Modal.Header>
 
         {error && <Error message={error} />}
@@ -316,6 +316,7 @@ const AddTeamModal = ({ btnAction, setBtnAction, isTeamSuccess, team, visible, t
               </div>
               <Input
                 id='teamName1'
+                className='w-full'
                 type='text'
                 value={teamName}
                 placeholder='team name'
@@ -333,6 +334,7 @@ const AddTeamModal = ({ btnAction, setBtnAction, isTeamSuccess, team, visible, t
                 id='teamDescription1'
                 type='text'
                 required={true}
+                className='w-full'
                 placeholder='Description'
                 value={description}
                 onChange={(e) => dispatch(handleDescription(e.target.value))}
