@@ -34,7 +34,7 @@ const Team = () => {
   } else if (!isLoading && !isError && getTeamData?.length > 0) {
     content = isSuccess && getTeamData
       .slice()
-      .sort((a, b) => b.timestamp - a.timestamp)
+      .sort((a, b) => a.id - b.id)
       .map((team) => <TeamItem team={team} visible={visible}
         toggleVisible={toggleVisible} btnAction={btnAction}
         setBtnAction={setBtnAction}

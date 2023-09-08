@@ -40,8 +40,8 @@ export const teamApi = apiSlice.injectEndpoints({
         dispatch(
           apiSlice.util.updateQueryData('getTeam', userEmail, (draft) => {
             let draftTeam = draft.find((t) => t.id == id)
+            draftTeam.id = data.id
             draftTeam.color = data.color
-
             draftTeam.description = data.description
             draftTeam.name = data.name
             draftTeam.assignedUsers = data.assignedUsers

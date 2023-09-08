@@ -1,15 +1,14 @@
 import { Modal, Button, Input } from 'react-daisyui'
 import Error from '../ui/Error'
 import Select from 'react-select'
-import { createRef, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { handleTeamName, handleDescription, handleColor, handleMember } from '../../features/team/teamSlice'
+import { handleTeamName, handleDescription, handleColor, handleMember, handleTeamId } from '../../features/team/teamSlice'
 import {
   useAddTeamMutation,
   useEditTeamMutation,
 } from '../../features/team/teamApi'
 import {
-  useGetProjectsQuery,
   useEditProjectsMutation,
 } from '../../features/projects/projectsApi'
 import { useGetAllUserQuery } from '../../features/users/usersApi'
@@ -22,31 +21,23 @@ const AddTeamModal = ({ btnAction, setBtnAction, isTeamSuccess, team, visible, t
     assignedUsers: teamAssignedUsers,
   } = team || {}
 
-  console.log(' 🔔 19 👉 AddTeamModal.js 👉 teamNames:', teamNames);
-  const { teamName, description, color, member } = useSelector((state) => state.team)
+  const { id, teamName, description, color, member } = useSelector((state) => state.team)
   const dispatch = useDispatch()
-  const [teamActionName, setTeamActionName] = useState('Add')
   const [error, setError] = useState(null)
   const [memberOptions, setMemberOptions] = useState([])
   const [creator, setCreator] = useState(null)
   const user = useSelector((state) => state.auth.user)
   const { email: userEmail } = user || {}
 
-  const {
-    data: getProjectData,
-    error: isProjecterror,
-  } = useGetProjectsQuery(userEmail)
-  const [addTeam, { isError, isSuccess: isAddSuccess }] = useAddTeamMutation()
+  const [addTeam, { isSuccess: isAddSuccess }] = useAddTeamMutation()
   const [
     editTeam,
     {
-      isError: isEditError,
       isSuccess: isEditSuccess,
     },
-  ] = useEditTeamMutation()
+  ] = useEditTeamMutation(userEmail)
 
   const [
-    editProject, { isError: isProjectEditError, isSuccess: isProjectEditSuccess, }
   ] = useEditProjectsMutation()
   const { data: userList, isSuccess: isUserListSuccess } = useGetAllUserQuery()
 
@@ -63,6 +54,19 @@ const AddTeamModal = ({ btnAction, setBtnAction, isTeamSuccess, team, visible, t
   ]
   useEffect(() => {
     if (visible) {
+      const allUsersList = () =>
+        isUserListSuccess &&
+        userList
+          .filter((el) => el.email !== userEmail && el.email !== creator?.email)
+          .map((el) => {
+            return {
+              value: el.email,
+              label: el.name,
+            }
+          })
+
+
+      setMemberOptions(allUsersList)
       if (btnAction === 'add') {
         dispatch(handleColor({
           value: '',
@@ -72,43 +76,18 @@ const AddTeamModal = ({ btnAction, setBtnAction, isTeamSuccess, team, visible, t
         dispatch(handleDescription(''))
         dispatch(handleMember([]))
 
-        const allUsersList = () =>
-          isUserListSuccess &&
-          userList
-            .filter((el) => !el.isFixed)
-            .map((el) => {
-              return {
-                value: el.email,
-                label: el.name,
-              }
-            })
-
-
-        setMemberOptions(allUsersList)
       }
 
       if (btnAction === 'edit' && teamId === visibleId) {
         isTeamSuccess && setCreator(teamAssignedUsers?.map((el) => {
-          if (el?.isFixed === true)
+          if (el.isFixed === true)
             return {
               email: el?.email,
               name: el?.name,
             }
         }))
 
-        const allUsersList = () =>
-          isUserListSuccess &&
-          userList
-            .filter((el) => !el.isFixed)
-            .map((el) => {
-              return {
-                value: el.email,
-                label: el.name,
-              }
-            })
-
-
-        setMemberOptions(allUsersList)
+        dispatch(handleTeamId(teamId))
         dispatch(handleTeamName(teamNames))
         dispatch(handleDescription(teamDescription))
         dispatch(handleColor({
@@ -128,65 +107,6 @@ const AddTeamModal = ({ btnAction, setBtnAction, isTeamSuccess, team, visible, t
     }
 
   }, [btnAction, visibleId, visible])
-  // useEffect(() => {
-  //   if (visible) {
-  //     if (btnAction === 'add') {
-  //       if (color.value !== '') {
-  //         setError(null)
-  //       }
-  //       if (!visible) {
-  //         setColor({
-  //           value: '',
-  //           label: 'select a color',
-  //         })
-  //         setName('')
-  //         setDescription('')
-  //         setError(null)
-  //       }
-  //     }
-  //   }
-  // }, [visible, color])
-
-  // useEffect(() => {
-  //   if (visible) {
-  //     if (btnAction === 'edit') {
-  //       console.log(' 🔔 92 👉 AddTeamModal.js 👉 btnAction:', btnAction);
-  //       setCreator(teamAssignedUsers[0])
-  //       setTeamActionName('Edit')
-  //       setName(teamName)
-  //       setDescription(teamDescription)
-  //       setColor({
-  //         value: teamColor.value,
-  //         label: teamColor.label,
-  //       })
-  //       const memberList = teamAssignedUsers
-  //         .map((el, index) => {
-  //           if (el?.email === creator?.email && el?.isFixed === true) return null
-  //           return {
-  //             label: el.name,
-  //             value: el.email,
-  //           }
-  //         })
-  //       setMember(memberList)
-  //     }
-  //   }
-  // }, [btnAction, error, visible])
-
-  // useEffect(() => {
-  //   if ((!isError && isSuccess) || (!isEditError && isEditSuccess)) {
-  //     if (btnAction === 'add') {
-  //       setColor({
-  //         value: '',
-  //         label: 'select a color',
-  //       })
-
-  //       setName('')
-  //       setDescription('')
-  //       setError(null)
-  //     }
-  //     toggleVisible()
-  //   }
-  // }, [isError, isSuccess, isEditError, isEditSuccess])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -215,49 +135,19 @@ const AddTeamModal = ({ btnAction, setBtnAction, isTeamSuccess, team, visible, t
           },
         })
         isAddSuccess &&
-
-          // handleTeamName('')
           dispatch(handleTeamName(''))
-        // setDescription('')
         dispatch(handleDescription(''))
         setError(null)
-
         dispatch(handleMember([]))
-        // setMember([])
         toggleVisible()
       }
     }
     if (btnAction === 'edit') {
-      const editingProject =
-        !isProjecterror &&
-        getProjectData?.filter((el) => el.assignedTeam.value === teamId)
-
-      editingProject?.map((el) => {
-        editProject({
-          id: el.id,
-          data: {
-            assignedTeam: {
-              label: teamName,
-              value: teamId,
-              bgColor: `bg-${color.value}-100`,
-              textColor: `text-${color.value}-500`,
-              assignedUsers: [
-                ...el.assignedTeam.assignedUsers,
-                ...member.map((el) => {
-                  return { name: el.label, email: el.value }
-                }),
-              ],
-            },
-          },
-          userEmail,
-        })
-      })
-
       editTeam({
-        id: teamId,
+        id,
         userEmail,
         data: {
-          teamName,
+          name: teamName,
           description,
           color: {
             value: color.value,
@@ -266,7 +156,6 @@ const AddTeamModal = ({ btnAction, setBtnAction, isTeamSuccess, team, visible, t
             textColor: `text-${color.value}-500`,
           },
           assignedUsers: [
-            { name: creator.name, email: creator.email, isFixed: true },
             ...member.map((el) => {
               return { name: el?.label, email: el?.value }
             }),
@@ -276,29 +165,15 @@ const AddTeamModal = ({ btnAction, setBtnAction, isTeamSuccess, team, visible, t
       })
       isEditSuccess &&
 
-        // handleTeamName('')
         dispatch(handleTeamName(''))
       dispatch(handleDescription(''))
-      // setDescription('')
       setError(null)
 
       dispatch(handleMember([]))
-      // setMember([])
       setBtnAction("")
       toggleVisible()
     }
   }
-  // const memberOptions =
-  //   isUserListSuccess &&
-  //   userList
-  //     .filter((el) => el.email !== creator?.email)
-  //     .filter((el) => el.email !== userEmail)
-  //     .map((el) => {
-  //       return {
-  //         value: el.email,
-  //         label: el.name,
-  //       }
-  //     })
 
   return (
     <>

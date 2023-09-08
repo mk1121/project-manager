@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
+  id: '',
   teamName: '',
   description: '',
   color: {
@@ -14,6 +15,9 @@ const teamSlice = createSlice({
   name: 'team',
   initialState,
   reducers: {
+    handleTeamId: (state, action) => {
+      state.id = parseInt(action.payload)
+    },
     handleTeamName: (state, action) => {
       state.teamName = action.payload
     },
@@ -29,5 +33,5 @@ const teamSlice = createSlice({
   },
 })
 
-export const { handleTeamName, handleDescription, handleColor, handleMember } = teamSlice.actions
+export const { handleTeamId, handleTeamName, handleDescription, handleColor, handleMember } = teamSlice.actions
 export default teamSlice.reducer
